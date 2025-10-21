@@ -1,0 +1,11 @@
+{
+    "coffeeLog": [
+    {
+        "Id":0,
+        "Timestamp":0,
+        "CoffeeType": "americano",
+        "size":"medium",
+        "venue":"home"
+    }
+] 
+}
