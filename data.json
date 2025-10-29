@@ -1,16 +1,4 @@
-[
-        {
-        "ID":0,
-        "Timestamp": "2025-10-22",
-        "CoffeeType": "americano",
-        "Venue":"home",
-        "Size":"medium"
-    },
-    {
-        "ID":1,
-        "Timestamp":"2025-10-23",
-        "CoffeeType": "americano",
-        "Venue":"home",
-        "Size":"medium"
-    }
-]
+[{"ID":0,"Timestamp":"2025-10-22","CoffeeType":"americano","Venue":"home","Size":"medium"},
+{"ID":1,"Timestamp":"2025-10-23","CoffeeType":"americano","Venue":"home","Size":"medium"},
+{"ID":2,"Timestamp":"2025-10-29","CoffeeType":"latte","Venue":"large","Size":"coffee"},
+{"ID":3,"Timestamp":"2025-10-29","CoffeeType":"latte","Venue":"large","Size":"coffee shop"}]
