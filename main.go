@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"slices"
 	"strings"
 	"time"
 )
@@ -19,11 +20,11 @@ var AcceptedCoffeeTypes = []string{
 	"espresso",
 	"latte",
 	"cappucino",
-	"flat White",
+	"flatWhite",
 	"mocha",
 	"americano",
 	"filter",
-	"caffè crema",
+	"caffèCrema",
 	"instant",
 }
 
@@ -35,19 +36,30 @@ var AcceptedCoffeeSize = []string{
 
 var AcceptedVenue = []string{
 	"home",
-	"coffee shop",
+	"coffeeShop",
 	"office",
 }
 
 type CoffeeLog struct {
 	ID         int
-	Timestamp  string
+	Date       string
 	CoffeeType string
 	Venue      string
 	Size       string
 }
 
 var seedData []CoffeeLog
+var coffeeLogs []CoffeeLog
+
+var espressoCount,
+	latteCount,
+	cappuccinoCount,
+	flatWhiteCount,
+	mochaCount,
+	americanoCount,
+	filterCount,
+	caffèCremaCount,
+	instantCount int
 
 // If the read or unmarshalling fails the program should end
 func init() {
@@ -86,7 +98,7 @@ func addCoffee(CoffeeType, Venue, Size string) (CoffeeLog, error) {
 
 	newCoffeeLog := CoffeeLog{
 		ID:         lastID + 1,
-		Timestamp:  time.Now().Format("2006-01-02"),
+		Date:       time.Now().Format("2006-01-02"),
 		CoffeeType: CoffeeType,
 		Venue:      Venue,
 		Size:       Size,
@@ -129,11 +141,8 @@ func main() {
 		fmt.Println("Time to add a coffee ")
 		addFlags := flag.NewFlagSet("add", flag.ExitOnError)
 		passedCoffeeType := addFlags.String("type", "americano", "The type of coffee (options: Espresso, Latte, Cappuccino, Flat White, Mocha, Americano, Filter, Caffè Crema, Instant). Default: Americano.")
-		// passedCoffeeTypeShort := addFlags.String("t", "americano", "The type of coffee (options: Espresso, Latte, Cappuccino, Flat White, Mocha, Americano, Filter, Caffè Crema, Instant). Default: Americano. ( shorthand )")
 		passedCoffeeSize := addFlags.String("size", "medium", "The size of the coffee (options: Small, Medium, Large). Default: Medium. Note: Flat White has no size option.")
-		// passedCoffeeSizeShort := addFlags.String("s", "medium", "The size of the coffee (options: Small, Medium, Large). Default: Medium. Note: Flat White has no size option. ( Shorthand )")
 		passedVenue := addFlags.String("venue", "home", "Where you are having your coffee (options: Home, Coffee Shop, Office). Default: Home.")
-		// passedVenueShort := addFlags.String("v", "home", "Where you are having your coffee (options: Home, Coffee Shop, Office). Default: Home. ( shorthand )")
 
 		addFlags.Parse(flags)
 
@@ -141,42 +150,23 @@ func main() {
 		chosenSize := strings.ToLower(*passedCoffeeSize)
 		chosenVenue := strings.ToLower(*passedVenue)
 
-		// if chosenCoffee == "americano" && *passedCoffeeTypeShort != "americano" {
-		// 	chosenCoffee = *passedCoffeeTypeShort
-		// }
-		// if chosenSize == "medium" && *passedCoffeeSizeShort != "medium" {
-		// 	chosenSize = *passedCoffeeSizeShort
-		// }
-		// if chosenVenue == "home" && *passedVenueShort != "home" {
-		// 	chosenVenue = *passedVenueShort
-		// }
-
 		coffeeIsValid := false
 		sizeIsValid := false
 		venueIsValid := false
 
-		for _, coffee := range AcceptedCoffeeTypes {
-			if chosenCoffee == coffee {
-				coffeeIsValid = true
-				fmt.Println("recieved an accepted coffee drink")
-				break
-			}
+		if slices.Contains(AcceptedCoffeeTypes, chosenCoffee) {
+			coffeeIsValid = true
+			fmt.Println("recieved an accepted coffee drink")
 		}
 
-		for _, size := range AcceptedCoffeeSize {
-			if chosenSize == size {
-				sizeIsValid = true
-				fmt.Println("recieved an accepted coffee size")
-				break
-			}
+		if slices.Contains(AcceptedCoffeeSize, chosenSize) {
+			sizeIsValid = true
+			fmt.Println("recieved an accepted coffee size")
 		}
 
-		for _, venue := range AcceptedVenue {
-			if chosenVenue == venue {
-				venueIsValid = true
-				fmt.Println("recieved an accepted coffee venue")
-				break
-			}
+		if slices.Contains(AcceptedVenue, chosenVenue) {
+			venueIsValid = true
+			fmt.Println("recieved an accepted coffee venue")
 		}
 
 		if !coffeeIsValid {
@@ -186,99 +176,151 @@ func main() {
 		if !sizeIsValid {
 			// Print usage statement
 			fmt.Println("size usage message")
-
 		}
 		if !venueIsValid {
 			// Print usage statement
 			fmt.Println("venue usage message")
-
 		}
 
 		coffeeLog, err := addCoffee(chosenCoffee, chosenSize, chosenVenue)
 		if err != nil {
-			log.Fatalf("failed to add your %s to the coffee log. err: %w", chosenCoffee, err)
+			log.Fatalf("failed to add your %s to the coffee log. err: %s", chosenCoffee, err)
 		}
 		fmt.Println("CoffeeLog added: ", coffeeLog)
-
 	}
 
 	if cmd == "today" {
 		// list todays coffee consumption stats
 		flags := os.Args[2:]
-		year, month, day := time.Now().Date()
-		fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
+		today := time.Now().Format("2006-01-02")
+		fmt.Printf("todays date is: %s\n ", today)
 		todayFlags := flag.NewFlagSet("today", flag.ExitOnError)
 		todayFlags.String("type", "americano", "filter by type (optional)")
-		// todayFlags.String("t", "americano", "filter by type (optional)")
 		todayFlags.String("venue", "home", "filter by venue (optional)")
-		//  todayFlags.String("v", "home", "filter by venue (optional)")
 		todayFlags.String("size", "medium", "filter by size (optional)")
-		// todayFlags.String("s", "medium", "filter by size (optional)")
 
 		todayFlags.Parse(flags)
+
+		for _, coffeeLog := range seedData {
+			if coffeeLog.Date == today {
+				coffeeLogs = append(coffeeLogs, coffeeLog)
+			}
+		}
+		fmt.Println("Todays coffeeLogs: ", coffeeLogs)
+
+		for _, coffeeLog := range coffeeLogs {
+			switch coffeeLog.CoffeeType {
+			case "espresso":
+				espressoCount++
+			case "latte":
+				latteCount++
+			case "cappuccino":
+				cappuccinoCount++
+			case "flatWhite":
+				flatWhiteCount++
+			case "mocha":
+				mochaCount++
+			case "americano":
+				americanoCount++
+			case "filter":
+				filterCount++
+			case "caffèCrema":
+				caffèCremaCount++
+			case "instant":
+				instantCount++
+			}
+		}
+
+		if espressoCount > 0 {
+			fmt.Printf("youve had %v espresso's today", espressoCount)
+		}
+		if latteCount > 0 {
+			fmt.Printf("you've had %v latte's today", latteCount)
+		}
+		if cappuccinoCount > 0 {
+			fmt.Printf("you've had %v cappuccino's today", cappuccinoCount)
+		}
+		if flatWhiteCount > 0 {
+			fmt.Printf("you've had %v flat whites today", flatWhiteCount)
+		}
+		if mochaCount > 0 {
+			fmt.Printf("you've had %v mocha's today", mochaCount)
+		}
+		if americanoCount > 0 {
+			fmt.Printf("you've had %v americans today", americanoCount)
+		}
+		if filterCount > 0 {
+			fmt.Printf("you've had %v filter coffee's today", filterCount)
+		}
+		if caffèCremaCount > 0 {
+			fmt.Printf("you've had %v caffè Crema's today", caffèCremaCount)
+		}
+		if instantCount > 0 {
+			fmt.Printf("you've had %v instant coffee's today", instantCount)
+		}
 	}
 
-	if cmd == "week" {
-		// list coffee consumption for this week
-		flags := os.Args[2:]
-		year, month, day := time.Now().Date()
-		fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
-		weekFlags := flag.NewFlagSet("today", flag.ExitOnError)
-		weekFlags.String("type", "americano", "filter by type (optional)")
-		// weekFlags.String("t", "americano", "filter by type (optional)")
-		weekFlags.String("venue", "home", "filter by venue (optional)")
-		// weekFlags.String("v", "home", "filter by venue (optional)")
-		weekFlags.String("size", "medium", "filter by size (optional)")
-		// weekFlags.String("s", "medium", "filter by size (optional)")
+	// if cmd == "week" {
+	// 	// list coffee consumption for this week
+	// 	flags := os.Args[2:]
+	// 	year, month, day := time.Now().Date()
+	// 	fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
+	// 	weekFlags := flag.NewFlagSet("today", flag.ExitOnError)
+	// 	weekFlags.String("type", "americano", "filter by type (optional)")
+	// 	// weekFlags.String("t", "americano", "filter by type (optional)")
+	// 	weekFlags.String("venue", "home", "filter by venue (optional)")
+	// 	// weekFlags.String("v", "home", "filter by venue (optional)")
+	// 	weekFlags.String("size", "medium", "filter by size (optional)")
+	// 	// weekFlags.String("s", "medium", "filter by size (optional)")
 
-		weekFlags.Parse(flags)
-	}
+	// 	weekFlags.Parse(flags)
+	// }
 
-	if cmd == "month" {
-		// list coffee consumption for this month
-		flags := os.Args[2:]
-		year, month, day := time.Now().Date()
-		fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
-		monthFlags := flag.NewFlagSet("today", flag.ExitOnError)
-		monthFlags.String("type", "americano", "filter by type (optional)")
-		// monthFlags.String("t", "americano", "filter by type (optional)")
-		monthFlags.String("venue", "home", "filter by venue (optional)")
-		// monthFlags.String("v", "home", "filter by venue (optional)")
-		monthFlags.String("size", "medium", "filter by size (optional)")
-		// monthFlags.String("s", "medium", "filter by size (optional)")
+	// if cmd == "month" {
+	// 	// list coffee consumption for this month
+	// 	flags := os.Args[2:]
+	// 	year, month, day := time.Now().Date()
+	// 	fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
+	// 	monthFlags := flag.NewFlagSet("today", flag.ExitOnError)
+	// 	monthFlags.String("type", "americano", "filter by type (optional)")
+	// 	// monthFlags.String("t", "americano", "filter by type (optional)")
+	// 	monthFlags.String("venue", "home", "filter by venue (optional)")
+	// 	// monthFlags.String("v", "home", "filter by venue (optional)")
+	// 	monthFlags.String("size", "medium", "filter by size (optional)")
+	// 	// monthFlags.String("s", "medium", "filter by size (optional)")
 
-		monthFlags.Parse(flags)
-	}
+	// 	monthFlags.Parse(flags)
+	// }
 
-	if cmd == "year" {
-		// list coffee consumption for this year
-		flags := os.Args[2:]
-		year, month, day := time.Now().Date()
-		fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
-		yearFlags := flag.NewFlagSet("today", flag.ExitOnError)
-		yearFlags.String("type", "americano", "filter by type (optional)")
-		// yearFlags.String("t", "americano", "filter by type (optional)")
-		yearFlags.String("venue", "home", "filter by venue (optional)")
-		// yearFlags.String("v", "home", "filter by venue (optional)")
-		yearFlags.String("size", "medium", "filter by size (optional)")
-		// yearFlags.String("s", "medium", "filter by size (optional)")
+	// if cmd == "year" {
+	// 	// list coffee consumption for this year
+	// 	flags := os.Args[2:]
+	// 	year, month, day := time.Now().Date()
+	// 	fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
+	// 	yearFlags := flag.NewFlagSet("today", flag.ExitOnError)
+	// 	yearFlags.String("type", "americano", "filter by type (optional)")
+	// 	// yearFlags.String("t", "americano", "filter by type (optional)")
+	// 	yearFlags.String("venue", "home", "filter by venue (optional)")
+	// 	// yearFlags.String("v", "home", "filter by venue (optional)")
+	// 	yearFlags.String("size", "medium", "filter by size (optional)")
+	// 	// yearFlags.String("s", "medium", "filter by size (optional)")
 
-		yearFlags.Parse(flags)
-	}
+	// 	yearFlags.Parse(flags)
+	// }
 
-	if cmd == "all" {
-		// list coffee consumption for this all time.
-		flags := os.Args[2:]
-		year, month, day := time.Now().Date()
-		fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
-		allTimeFlags := flag.NewFlagSet("today", flag.ExitOnError)
-		allTimeFlags.String("type", "americano", "filter by type (optional)")
-		// allTimeFlags.String("t", "americano", "filter by type (optional)")
-		allTimeFlags.String("venue", "home", "filter by venue (optional)")
-		// allTimeFlags.String("v", "home", "filter by venue (optional)")
-		allTimeFlags.String("size", "medium", "filter by size (optional)")
-		// allTimeFlags.String("s", "medium", "filter by size (optional)")
+	// if cmd == "all" {
+	// 	// list coffee consumption for this all time.
+	// 	flags := os.Args[2:]
+	// 	year, month, day := time.Now().Date()
+	// 	fmt.Printf("year: %v, month: %v, day: %v", year, month, day)
+	// 	allTimeFlags := flag.NewFlagSet("today", flag.ExitOnError)
+	// 	allTimeFlags.String("type", "americano", "filter by type (optional)")
+	// 	// allTimeFlags.String("t", "americano", "filter by type (optional)")
+	// 	allTimeFlags.String("venue", "home", "filter by venue (optional)")
+	// 	// allTimeFlags.String("v", "home", "filter by venue (optional)")
+	// 	allTimeFlags.String("size", "medium", "filter by size (optional)")
+	// 	// allTimeFlags.String("s", "medium", "filter by size (optional)")
 
-		allTimeFlags.Parse(flags)
-	}
+	// 	allTimeFlags.Parse(flags)
+	// }
 }
