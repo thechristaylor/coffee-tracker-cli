@@ -75,7 +75,6 @@ func init() {
 
 // get the last ID from seedData
 func getLastId(seedData []CoffeeLog) (int, error) {
-	fmt.Println("Attemping to get the previous coffeeLog ID ")
 	lastID := 0
 	if len(seedData) == 0 {
 		lastID = 0
@@ -85,12 +84,10 @@ func getLastId(seedData []CoffeeLog) (int, error) {
 			lastID = CoffeeLog.ID
 		}
 	}
-	fmt.Println("last ID is: ", lastID)
 	return lastID, nil
 }
 
 func addCoffee(CoffeeType, Venue, Size string) (CoffeeLog, error) {
-	fmt.Println("attempting to add a new log to the coffeeLog")
 	lastID, err := getLastId(seedData)
 	if err != nil {
 		log.Fatal(err)
@@ -104,11 +101,7 @@ func addCoffee(CoffeeType, Venue, Size string) (CoffeeLog, error) {
 		Size:       Size,
 	}
 
-	fmt.Println("new CoffeeLog: ", newCoffeeLog)
-
 	seedData = append(seedData, newCoffeeLog)
-
-	fmt.Println("new seedData: ", seedData)
 
 	bs, err := json.Marshal(seedData)
 	if err != nil {
@@ -138,7 +131,7 @@ func main() {
 	if cmd == "add" {
 		// create a new coffee log.
 		flags := os.Args[2:]
-		fmt.Println("Time to add a coffee ")
+		fmt.Println("You're having another coffee?? ")
 		addFlags := flag.NewFlagSet("add", flag.ExitOnError)
 		passedCoffeeType := addFlags.String("type", "americano", "The type of coffee (options: Espresso, Latte, Cappuccino, Flat White, Mocha, Americano, Filter, Caffè Crema, Instant). Default: Americano.")
 		passedCoffeeSize := addFlags.String("size", "medium", "The size of the coffee (options: Small, Medium, Large). Default: Medium. Note: Flat White has no size option.")
@@ -156,17 +149,14 @@ func main() {
 
 		if slices.Contains(AcceptedCoffeeTypes, chosenCoffee) {
 			coffeeIsValid = true
-			fmt.Println("recieved an accepted coffee drink")
 		}
 
 		if slices.Contains(AcceptedCoffeeSize, chosenSize) {
 			sizeIsValid = true
-			fmt.Println("recieved an accepted coffee size")
 		}
 
 		if slices.Contains(AcceptedVenue, chosenVenue) {
 			venueIsValid = true
-			fmt.Println("recieved an accepted coffee venue")
 		}
 
 		if !coffeeIsValid {
@@ -182,11 +172,11 @@ func main() {
 			fmt.Println("venue usage message")
 		}
 
-		coffeeLog, err := addCoffee(chosenCoffee, chosenSize, chosenVenue)
+		_, err := addCoffee(chosenCoffee, chosenSize, chosenVenue)
 		if err != nil {
 			log.Fatalf("failed to add your %s to the coffee log. err: %s", chosenCoffee, err)
 		}
-		fmt.Println("CoffeeLog added: ", coffeeLog)
+		fmt.Printf("%v added... Enjoy ☕\n", chosenCoffee)
 	}
 
 	if cmd == "today" {
