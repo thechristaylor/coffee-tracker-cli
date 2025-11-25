@@ -34,7 +34,7 @@ Clone the repo, build, and run:
 
 ```bash
 go build -o coffee
-./coffee add -type=espresso -size=small -venue=home
+./coffee add -t espresso -s small -v home
 ./coffee today
 ```
 
@@ -45,10 +45,6 @@ go build -o coffee
 |---------|-------------|
 | `add`   | Add a new coffee log |
 | `today` | Show coffee stats for today |
-| `week`  | Show coffee stats for this week |
-| `month` | Show coffee stats for this month |
-| `year`  | Show coffee stats for this year |
-| `all`   | Show all-time coffee stats |
 
 ---
 
