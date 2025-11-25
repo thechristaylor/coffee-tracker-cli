@@ -124,8 +124,8 @@ func main() {
 		cmd = os.Args[1]
 	}
 
-	if cmd == "" {
-		fmt.Println("help message goes here! ")
+	if cmd != "add" && cmd != "today" {
+		fmt.Println("You must pass the add or today command")
 	}
 
 	if cmd == "add" {
@@ -133,9 +133,9 @@ func main() {
 		flags := os.Args[2:]
 		fmt.Println("You're having another coffee?? ")
 		addFlags := flag.NewFlagSet("add", flag.ExitOnError)
-		passedCoffeeType := addFlags.String("type", "americano", "The type of coffee (options: Espresso, Latte, Cappuccino, Flat White, Mocha, Americano, Filter, Caffè Crema, Instant). Default: Americano.")
-		passedCoffeeSize := addFlags.String("size", "medium", "The size of the coffee (options: Small, Medium, Large). Default: Medium. Note: Flat White has no size option.")
-		passedVenue := addFlags.String("venue", "home", "Where you are having your coffee (options: Home, Coffee Shop, Office). Default: Home.")
+		passedCoffeeType := addFlags.String("t", "americano", "The type of coffee (options: Espresso, Latte, Cappuccino, Flat White, Mocha, Americano, Filter, Caffè Crema, Instant). Default: Americano.")
+		passedCoffeeSize := addFlags.String("s", "medium", "The size of the coffee (options: Small, Medium, Large). Default: Medium. Note: Flat White has no size option.")
+		passedVenue := addFlags.String("v", "home", "Where you are having your coffee (options: Home, Coffee Shop, Office). Default: Home.")
 
 		addFlags.Parse(flags)
 
@@ -183,7 +183,6 @@ func main() {
 		// list todays coffee consumption stats
 		flags := os.Args[2:]
 		today := time.Now().Format("2006-01-02")
-		fmt.Printf("todays date is: %s\n ", today)
 		todayFlags := flag.NewFlagSet("today", flag.ExitOnError)
 		todayFlags.String("type", "americano", "filter by type (optional)")
 		todayFlags.String("venue", "home", "filter by venue (optional)")
@@ -196,7 +195,6 @@ func main() {
 				coffeeLogs = append(coffeeLogs, coffeeLog)
 			}
 		}
-		fmt.Println("Todays coffeeLogs: ", coffeeLogs)
 
 		for _, coffeeLog := range coffeeLogs {
 			switch coffeeLog.CoffeeType {
@@ -222,31 +220,31 @@ func main() {
 		}
 
 		if espressoCount > 0 {
-			fmt.Printf("youve had %v espresso's today", espressoCount)
+			fmt.Printf("you've had %v espresso's today ", espressoCount)
 		}
 		if latteCount > 0 {
-			fmt.Printf("you've had %v latte's today", latteCount)
+			fmt.Printf("you've had %v latte's today ", latteCount)
 		}
 		if cappuccinoCount > 0 {
-			fmt.Printf("you've had %v cappuccino's today", cappuccinoCount)
+			fmt.Printf("you've had %v cappuccino's today ", cappuccinoCount)
 		}
 		if flatWhiteCount > 0 {
-			fmt.Printf("you've had %v flat whites today", flatWhiteCount)
+			fmt.Printf("you've had %v flat whites today ", flatWhiteCount)
 		}
 		if mochaCount > 0 {
-			fmt.Printf("you've had %v mocha's today", mochaCount)
+			fmt.Printf("you've had %v mocha's today ", mochaCount)
 		}
 		if americanoCount > 0 {
-			fmt.Printf("you've had %v americans today", americanoCount)
+			fmt.Printf("you've had %v americans today ", americanoCount)
 		}
 		if filterCount > 0 {
-			fmt.Printf("you've had %v filter coffee's today", filterCount)
+			fmt.Printf("you've had %v filter coffee's today ", filterCount)
 		}
 		if caffèCremaCount > 0 {
-			fmt.Printf("you've had %v caffè Crema's today", caffèCremaCount)
+			fmt.Printf("you've had %v caffè Crema's today ", caffèCremaCount)
 		}
 		if instantCount > 0 {
-			fmt.Printf("you've had %v instant coffee's today", instantCount)
+			fmt.Printf("you've had %v instant coffee's today ", instantCount)
 		}
 	}
 }
